@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { FaSave } from "react-icons/fa";
 import { AlertBox } from "../../shared/AlertBox/AlertBox";
-import { axiosInstance } from "../../../config/axiosInstance";
-import toast from "react-hot-toast";
+import { useProducts } from "../../../hooks/useProducts";
 
 export const ListCardProduct = () => {
-  const [products, setProducts] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedCategory, setEditedCategory] = useState("");
@@ -16,33 +14,25 @@ export const ListCardProduct = () => {
   const [editedSellingPrice, setEditedSellingPrice] = useState(null);
   const [editedDiscount, setEditedDiscount] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { products, updateProduct, deleteProduct } = useProducts();
 
-  const fetchProducts = async () => {
-    try {
-      const response = await axiosInstance({
-        method: "GET",
-        url: "/admin/products",
-        withCredentials: true,
-      });
-      setProducts(response?.data?.data);
-    } catch (error) {
-      toast.error("Something went wrong!");
-    }
-  };
+  const productData = products?.filter((product) => {
+    const query = searchQuery.toLowerCase();
 
-  const updateProductData = (id) => {
-    setEditId(null);
-  };
-
-  const deleteProduct = (id) => {};
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-  console.log(products);
+    return (
+      product?.productName?.toLowerCase().includes(query) ||
+      product?.category?.categoryName.toLowerCase().includes(query) ||
+      product?.quantity.toString().toLowerCase().includes(query) ||
+      product?.product_id?.toLowerCase().includes(query) ||
+      product?.costPrice?.toString().includes(query) ||
+      product?.sellingPrice?.toString().includes(query) ||
+      product?.discount?.toString().includes(query)
+    );
+  });
 
   return (
-    <div className="md:w-5/6 w-full text-center pt-5 pb-14 px-5 border border-primary h-full shadow">
+    <div className="md:w-5/6 w-full md:max-h-[520px] text-center pt-5 pb-14 px-5 border border-primary  shadow">
       <div className="grid grid-cols-1 md:grid-cols-12 items-center mb-4">
         <h1 className="font-thin text-start md:col-span-8 text-3xl my-6 text-primary">
           Products
@@ -51,10 +41,12 @@ export const ListCardProduct = () => {
           className="rounded-xl shadow md:col-span-4 outline-primary h-10 p-5 w-full"
           type="text"
           placeholder="Search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-auto h-96 pb-10">
         <table className="min-w-[768px] w-full border border-primary text-left text-sm sm:text-base">
           <thead className="bg-primary/10 font-semibold text-black">
             <tr>
@@ -70,7 +62,7 @@ export const ListCardProduct = () => {
             </tr>
           </thead>
           <tbody>
-            {products?.map((product, index) => (
+            {productData?.map((product, index) => (
               <tr key={product?._id} className="border-t border-primary">
                 <td className="border border-primary px-4 py-2">{index + 1}</td>
                 <td className="border border-primary px-4 py-2">
@@ -84,20 +76,13 @@ export const ListCardProduct = () => {
                       className="w-full rounded border p-1"
                     />
                   ) : (
-                    product?.productname
+                    product?.productName
                   )}
                 </td>
                 <td className="border border-primary px-4 py-2">
-                  {editId === product._id ? (
-                    <input
-                      value={editedCategory}
-                      onChange={(e) => setEditedCategory(e.target.value)}
-                      className="w-full rounded border p-1"
-                    />
-                  ) : (
-                    product?.category?.categoryname
-                  )}
+                  {product?.category?.categoryName}
                 </td>
+
                 <td className="border border-primary px-4 py-2">
                   {editId === product._id ? (
                     <input
@@ -121,7 +106,7 @@ export const ListCardProduct = () => {
                       className="w-full rounded border p-1"
                     />
                   ) : (
-                    product?.costprice
+                    product?.costPrice
                   )}
                 </td>
                 <td className="border border-primary px-4 py-2">
@@ -133,7 +118,7 @@ export const ListCardProduct = () => {
                       className="w-full rounded border p-1"
                     />
                   ) : (
-                    product.sellingprice
+                    product.sellingPrice
                   )}
                 </td>
                 <td className="border border-primary px-4 py-2">
@@ -154,7 +139,18 @@ export const ListCardProduct = () => {
                       <FaSave
                         title="Save"
                         size={20}
-                        onClick={() => updateProductData(product._id)}
+                        onClick={() => {
+                          updateProduct({
+                            productId: editId,
+                            productName: editedTitle,
+                            quantity: editedQuantity,
+                            costPrice: editedCostPrice,
+                            sellingPrice: editedSellingPrice,
+                            discount: editedDiscount,
+                            category: editedCategory,
+                          });
+                          setEditId(null);
+                        }}
                         className="text-primary hover:text-blue-800 cursor-pointer"
                       />
                     ) : (
@@ -164,11 +160,11 @@ export const ListCardProduct = () => {
                           size={20}
                           onClick={() => {
                             setEditId(product?._id);
-                            setEditedTitle(product?.productname);
-                            setEditedCategory(product?.category?.categoryname);
+                            setEditedTitle(product?.productName);
                             setEditedQuantity(product?.quantity);
-                            setEditedSellingPrice(product?.sellingprice);
-                            setEditedCostPrice(product?.costprice);
+                            setEditedCategory(product?.category?._id);
+                            setEditedSellingPrice(product?.sellingPrice);
+                            setEditedCostPrice(product?.costPrice);
                             setEditedDiscount(product?.discount);
                           }}
                           className="text-primary hover:text-blue-800 cursor-pointer"

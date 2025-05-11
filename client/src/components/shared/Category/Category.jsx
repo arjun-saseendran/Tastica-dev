@@ -1,11 +1,24 @@
-import React from "react";
+import { useDispatch } from "react-redux";
+import { useCategories } from "../../../hooks/useCategories";
+import { saveSearchQuery } from "../../../redux/features/searchSlice";
 
-export const Category = ({ categories }) => {
+export const Category = () => {
+  const { categories, setCategoryId, setIsCategoryClicked, isCategoryClicked } =
+    useCategories();
+const dispatch = useDispatch()
   return (
     <>
-      {categories.map((category) => (
-        <div className="bg-[#E8F9FF] font-semibold border my-1 cursor-pointer hover:bg-opacity-50 shadow-2xl rounded-lg p-5">
-          <p>{category.title}</p>
+      {categories?.map((category) => (
+        <div
+          onClick={() => {
+            setCategoryId(category?._id);
+            setIsCategoryClicked(!isCategoryClicked);
+            dispatch(saveSearchQuery(''))
+          }}
+          key={category?._id}
+          className="bg-[#E8F9FF] hover:bg-blue-100  font-semibold border my-1 cursor-pointer hover:bg-opacity-50 shadow-2xl rounded-lg p-5"
+        >
+          <p key={category?._id}>{category?.categoryName}</p>
         </div>
       ))}
     </>

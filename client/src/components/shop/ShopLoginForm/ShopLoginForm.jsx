@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
 import { axiosInstance } from "../../../config/axiosInstance";
 import toast from "react-hot-toast";
@@ -17,16 +17,16 @@ export const ShopLoginForm = ({ action }) => {
 
   let api = null;
   if (action === "Signup") api = "/shop/create-shop";
-  if (action === "Login") api = "/shop/login-shop";
+  if (action === "Login") api = "/shop/login";
 
-  const shopname = useRef(null);
+  const shopName = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
 
   const handleSubmit = async () => {
     if (action === "Signup") {
       const data = {
-        shopname: shopname.current.value,
+        shopName: shopName.current.value,
         email: email.current.value,
         password: password.current.value,
       };
@@ -41,8 +41,8 @@ export const ShopLoginForm = ({ action }) => {
         });
         toast.success("Shop created");
       } catch (error) {
-        toast.error(error);
-        log;
+        toast.error("Something went wrong!");
+     
       }
     } else {
       const data = {
@@ -57,13 +57,13 @@ export const ShopLoginForm = ({ action }) => {
           withCredentials: true,
           data,
         });
-        console.log(response?.data?.data);
 
         dispatch(addShopData(response?.data?.data));
         toast.success("Login success");
         navigate("/shop");
       } catch (error) {
-        toast.error(error?.response?.data?.message);
+        toast.error("Invalid credentials!");
+        console.log(error)
       }
     }
   };
@@ -71,7 +71,7 @@ export const ShopLoginForm = ({ action }) => {
     <div className="flex justify-center">
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="mx-2 my-20 
+        className="mx-2 my-20
         }  max-w-[500px] pb-10 md:pb-20 px-4 md:px-10 bg-[#E8F9FF] text-[#155E95] shadow-2xl rounded-lg"
       >
         <h1 className="text-3xl py-10 font-thin text-center text-[#155E95] ">
@@ -81,7 +81,7 @@ export const ShopLoginForm = ({ action }) => {
         {action === "Signup" && (
           <input
             type="text"
-            ref={shopname}
+            ref={shopName}
             placeholder="Shop Name"
             className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
           />

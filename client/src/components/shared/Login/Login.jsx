@@ -1,9 +1,9 @@
+import toast from "react-hot-toast";
 import { useRef, useState } from "react";
 import { validateData } from "../../../utils/validateData";
 import { FaSignInAlt } from "react-icons/fa";
 import { MdPersonAdd } from "react-icons/md";
 import { axiosInstance } from "../../../config/axiosInstance";
-import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addAdminData, addStaffData } from "../../../redux/features/authSlice";
@@ -12,9 +12,9 @@ export const Login = ({ role, action }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const username = useRef(null);
+  const userName = useRef(null);
   const email = useRef(null);
-  const phonenumber = useRef(null);
+  const phoneNumber = useRef(null);
   const password = useRef(null);
   const confirmPassword = useRef(null);
 
@@ -28,39 +28,46 @@ export const Login = ({ role, action }) => {
   const handleSubmit = async () => {
     if (action === "Signup") {
       const message = validateData(
-        username?.current?.value,
+        userName?.current?.value,
         email?.current?.value,
+        phoneNumber?.current.value,
         password?.current?.value,
         confirmPassword?.current?.value,
       );
-
+      if (message) {
+        setErrorMessage(message);
+        return;
+      }
       const data = {
-        username: username?.current?.value,
+        userName: userName?.current?.value,
         email: email?.current?.value,
-        phonenumber: phonenumber?.current?.value,
+        phoneNumber: phoneNumber?.current?.value,
         password: password?.current?.value,
       };
 
       try {
         // Api call
-        const response = await axiosInstance({
+        await axiosInstance({
           method: "POST",
           url: api,
           withCredentials: true,
           data,
         });
-        toast.success("Signup success");
-        if (role === "Staff") navigate("/shop/staff/login");
 
-        console.log(response);
+        userName.current.value = "";
+        email.current.value = "";
+        phoneNumber.current.value = "";
+        password.current.value = "";
+        confirmPassword.current.value = "";
+        toast.success("Signup success");
       } catch (error) {
-        toast.error(error?.response?.data?.message);
+        toast.error("Something went wrong!");
 
         console.log(error);
       }
     } else {
       const data = {
-        phonenumber: phonenumber?.current?.value,
+        phoneNumber: phoneNumber?.current?.value,
         password: password?.current?.value,
       };
 
@@ -73,16 +80,15 @@ export const Login = ({ role, action }) => {
           data,
         });
         toast.success("Login success");
-        console.log(response);
+
         if (role === "Admin") dispatch(addAdminData(response?.data?.data));
         if (role === "Staff") dispatch(addStaffData(response?.data?.data));
-        phonenumber.current.value = null;
+        phoneNumber.current.value = null;
         password.current.value = null;
         if (role === "Admin") navigate("/admin");
         if (role === "Staff") navigate("/staff");
       } catch (error) {
-        toast.error(error?.response?.data?.message);
-        console.log(error);
+        toast.error("Invalid credentials!");
       }
     }
   };
@@ -100,7 +106,7 @@ export const Login = ({ role, action }) => {
         {action === "Signup" && (
           <input
             type="text"
-            ref={username}
+            ref={userName}
             placeholder="Full Name"
             className="p-4 my-1  w-full  bg-white shadow-2xl outline-[#155E95]"
           />
@@ -115,7 +121,7 @@ export const Login = ({ role, action }) => {
         )}
         <input
           type="text"
-          ref={phonenumber}
+          ref={phoneNumber}
           placeholder="Mobile"
           className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
         />
@@ -134,9 +140,13 @@ export const Login = ({ role, action }) => {
             className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
           />
         )}
-        <p className="text-secondary font-bold text-lg py-2">{errorMessage}</p>
+        {errorMessage && (
+          <p className="text-secondary font-bold text-lg py-2">
+            {errorMessage}
+          </p>
+        )}
         <button
-          className="p-4  bg-primary hover:opacity-90 w-full text-white rounded-lg"
+          className="p-4  bg-primary mt-2 hover:opacity-90 w-full text-white rounded-lg"
           onClick={handleSubmit}
         >
           {action === "Login" ? (

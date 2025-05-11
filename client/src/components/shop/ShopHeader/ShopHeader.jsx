@@ -13,7 +13,7 @@ import { axiosInstance } from "../../../config/axiosInstance";
 export const ShopHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const shopname = useSelector((state) => state.auth?.shopData?.shopname);
+  const shopname = useSelector((state) => state.auth?.shopData?.shopName);
   const shopLogout = async () => {
     try {
       const response = await axiosInstance({
@@ -27,6 +27,7 @@ export const ShopHeader = () => {
       toast.error(error?.response?.data?.message || "Something went wrong!");
     }
   };
+
   return (
     <nav className="w-full">
       <div className="flex mx-auto py-4 px-5  justify-between items-center bg-primary text-white font-bold md:px-10 ">
@@ -38,7 +39,7 @@ export const ShopHeader = () => {
         <div className="flex items-center font-thin gap-5">
           {shopname && (
             <FaHome
-              className="cursor-pointer"
+              className="cursor-pointer hover:text-blue-200"
               title="Home"
               onClick={() => navigate("/shop")}
               size={20}
@@ -47,7 +48,8 @@ export const ShopHeader = () => {
           {shopname && <p className="text-xl">{shopname}</p>}
           {shopname && (
             <MdLogout
-            size={20}
+              size={20}
+              title="Logout"
               onClick={() => {
                 dispatch(removeShopData());
                 dispatch(removeAdminData());
@@ -55,7 +57,7 @@ export const ShopHeader = () => {
                 shopLogout();
                 navigate("/");
               }}
-              className="cursor-pointer"
+              className="cursor-pointer hover:text-secondary"
             />
           )}
         </div>

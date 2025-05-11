@@ -1,51 +1,46 @@
 import { useRef } from "react";
 import { FaBox } from "react-icons/fa";
 import { SideBar } from "../SideBar/SideBar";
-import { useSelector } from "react-redux";
 import { axiosInstance } from "../../../config/axiosInstance";
 import toast from "react-hot-toast";
+import { useCategories } from "../../../hooks/useCategories";
 
 export const AddProductCard = () => {
-  const productname = useRef(null);
+  const { categories } = useCategories();
+  const productName = useRef(null);
   const quantity = useRef(null);
-  const costprice = useRef(null);
-  const sellingprice = useRef(null);
+  const costPrice = useRef(null);
+  const sellingPrice = useRef(null);
   const discount = useRef(null);
   const category = useRef(null);
-  const categories = useSelector((state) => state?.categories);
 
   const handleSubmit = async () => {
     const data = {
-      productname: productname.current.value,
-      quantity: quantity.current.value,
-      costprice: costprice.current.value,
-      sellingprice: sellingprice.current.value,
-      discount: discount.current.value,
-      category: category.current.value,
+      productName: productName?.current?.value,
+      quantity: quantity?.current?.value,
+      costPrice: costPrice?.current?.value,
+      sellingPrice: sellingPrice?.current?.value,
+      discount: discount?.current?.value,
+      category: category?.current?.value,
     };
     try {
-      const response = await axiosInstance({
+      await axiosInstance({
         method: "POST",
         url: "/product/create",
         withCredentials: true,
         data,
       });
-      console.log(response);
 
       toast.success("Product added successfully");
-      (productname.current.value = ""),
+      (productName.current.value = ""),
         (quantity.current.value = ""),
-        (costprice.current.value = ""),
-        (sellingprice.current.value = ""),
+        (costPrice.current.value = ""),
+        (sellingPrice.current.value = ""),
         (discount.current.value = "");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong!");
     }
   };
-
-  const categoryList = Object.values(categories).filter(
-    (item) => typeof item === "object" && !item.hasOwnProperty("rehydrated")
-  );
 
   return (
     <>
@@ -62,7 +57,7 @@ export const AddProductCard = () => {
 
           <input
             type="text"
-            ref={productname}
+            ref={productName}
             placeholder="Product Name"
             className="p-4 my-1  w-full  bg-white shadow-2xl outline-[#155E95]"
           />
@@ -76,14 +71,14 @@ export const AddProductCard = () => {
 
           <input
             type="number"
-            ref={costprice}
+            ref={costPrice}
             placeholder="Cost Price"
             className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
           />
 
           <input
             type="number"
-            ref={sellingprice}
+            ref={sellingPrice}
             placeholder="Selling Price"
             className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
           />
@@ -99,9 +94,9 @@ export const AddProductCard = () => {
             className="p-4 my-1 w-full bg-white shadow-2xl outline-[#155E95]"
           >
             <option value="">Select a category</option>
-            {categoryList?.map((category) => (
+            {categories?.map((category) => (
               <option key={category?._id} value={category?._id}>
-                {category?.categoryname}
+                {category?.categoryName}
               </option>
             ))}
           </select>
