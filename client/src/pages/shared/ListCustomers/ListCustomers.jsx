@@ -1,4 +1,3 @@
-import React from "react";
 import { SideBar } from "../../../components/shared/SideBar/SideBar";
 import { ListCardCustomer } from "../../../components/shared/ListCardCustomer/ListCardCustomer";
 

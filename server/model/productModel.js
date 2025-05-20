@@ -16,12 +16,16 @@ const productSchema = new mongoose.Schema({
         required:true
     },
     costPrice:{
-        type:Number,
+         type:Number,
         default:0,
     },
     sellingPrice:{
         type:Number,
         default:0,
+    },
+    discountType:{
+        type:String,
+        default:"percentage"
     },
     discount:{
         type:Number,
@@ -36,16 +40,21 @@ const productSchema = new mongoose.Schema({
         required:true
     },
     category:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Category", 
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Category", 
     },
     shop:{
         type:String,
         required:true
     },
     costPriceProfit:{
-        type:Number,
+       type:Number,
         default:0,
+    },
+    unit:{
+        type:String,
+        enum:['no','kg','li','m'],
+        default:'no'
     },
 
     isActive:{

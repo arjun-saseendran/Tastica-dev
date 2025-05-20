@@ -1,7 +1,7 @@
 import customerModel from "../model/customerModel.js";
 import { generateCustomerId } from "../utils/generateCustomerId.js";
 import { customerValidation } from "../utils/joiValidation.js";
-
+import loyalityPointModel from "../model/loyalityPointModel.js"
 
 export const createCustomer = async (req,res) => {
     try{
@@ -104,9 +104,30 @@ export const getCustomer = async(req,res) => {
          return res.status(404).json({success:false,message:"No data found"})
        }
 
+       const findLoyalityPoint = await loyalityPointModel.findOne({shop:shopId})
+       
+      for (const item of fetchData){           
+          item.pointAmount = parseFloat(item.loyalityPoint * findLoyalityPoint.loyalityRate).toFixed(2)
+      }
+         
        res.status(200).json({success:true,message:"Data fetch successfully",data:fetchData})
    }catch(error){
       console.log(error)
       return res.status(500).json({success:false,message:"Internal Server Error"})
+   }
+}
+
+
+export const getSingleCustomer = async (req,res) => {
+   try{
+     const {id} = req.params;
+     const shopId = req.shop.id;
+
+     const getCustomer = await customerModel.findOne({_id:id,shopId:shopId}).populate("invoices")
+
+     res.status(200).json({success:true,message:"Data fetched successfully", data:getCustomer});
+   }catch(error){
+      console.log(error)
+    return res.status(500).json({success:false,message:"Internal Server Error"})
    }
 }

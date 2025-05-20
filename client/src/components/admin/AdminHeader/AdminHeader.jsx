@@ -1,46 +1,33 @@
 import { useDispatch, useSelector } from "react-redux";
-import { MdLogout } from "react-icons/md";
+import { MdReceipt, MdShoppingCart, MdClose } from "react-icons/md";
 import { toggleSideBar } from "../../../redux/features/sidebarSlice";
 import { CgMenuLeft } from "react-icons/cg";
-import { FaUserShield } from "react-icons/fa";
-import { removeAdminData } from "../../../redux/features/authSlice";
-import { axiosInstance } from "../../../config/axiosInstance";
-import toast from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router-dom";
+import { FaUserShield, FaRegStickyNote, FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { useState } from "react";
 import { saveSearchQuery } from "../../../redux/features/searchSlice";
+import { useAdmins } from "../../../hooks/useAdmins";
+import { useInvoices } from "../../../hooks/useInvoices";
 
 export const AdminHeader = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const adminName = useSelector((state) => state?.auth?.adminData?.userName);
   const searchQuery = useSelector((state) => state?.search);
-
-  const adminLogout = async () => {
-    try {
-      const response = await axiosInstance({
-        method: "POST",
-        url: "/admin/logout",
-        withCredentials: true,
-      });
-      toast.success("Logout success");
-      console.log(response);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
-    }
+  const { logout } = useAdmins();
+  const openNewInvoice = () => {
+    window.open("/admin/cart", "_blank");
   };
-
-  const handleOpenNewCartTab = () => {
-    const newTab = window.open("/admin/cart", "_blank");
-  };
+  const {savedInvoices} = useInvoices();
+  
+  
 
   return (
     <nav className="w-full">
       <div className="md:flex mx-auto py-4 px-5 justify-between items-center bg-primary text-white font-bold md:px-10">
-        <div className="flex justify-between items-center w-full md:w-1/2">
+        <div className="flex justify-between items-center">
           <div
             onClick={() => dispatch(toggleSideBar())}
             className="cursor-pointer flex items-center gap-4"
@@ -57,46 +44,79 @@ export const AdminHeader = () => {
         </div>
 
         <div
-          className={`flex w-full md:w-auto md:block mt-14 md:mt-0 justify-end ${
+          className={`flex w-full md:w-auto md:block mt-2 md:mt-0 justify-end ${
             open ? "block" : "hidden"
           }`}
         >
-          <ul className="md:flex items-center justify-center font-thin gap-10 bg-primary p-5 md:p-0 w-full text-center">
-            {location.pathname === "/admin/cart" && (
-              <>
-                <li className="mb-2 md:border-none cursor-pointer rounded-md py-2 md:py-0">
-                  <input
-                    className="bg-[#E8F9FF] px-8 py-2 outline-[#155E95] rounded text-black w-full"
-                    placeholder="Search Here"
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => dispatch(saveSearchQuery(e.target.value))}
-                  />
-                </li>
-                <li className="border cursor-pointer rounded-md py-2 md:py-0 mb-2 md:border-none">
-                  ORDERS
-                </li>
-                <li
-                  onClick={handleOpenNewCartTab}
-                  className="border md:border-none cursor-pointer font-bold text-3xl rounded-md md:py-0 mb-2"
-                >
-                  +
-                </li>
-              </>
-            )}
-            <li className="flex items-center mb-2 gap-5">
-              {adminName && <p className="text-xl">{adminName}</p>}
-              {adminName && <FaUserShield size={20} />}
+          <ul className="flex flex-col md:flex-row items-center font-thin gap-2 bg-primary  w-full  text-center md:gap-5">
+            <li className=" md:border-none cursor-pointer rounded-md relative">
+              <input
+                className="bg-[#E8F9FF]  px-8 py-2 outline-[#155E95] rounded text-black w-[275px]  md:w-44 lg:w-96"
+                placeholder="Smart Search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => dispatch(saveSearchQuery(e.target.value))}
+              />
+              {searchQuery && (
+                <MdClose
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-red-800 hover:text-red-500 cursor-pointer font-thin"
+                  onClick={() => dispatch(saveSearchQuery(""))}
+                />
+              )}
+            </li>
+
+            <li
+              className="cursor-pointer rounded shadow-xl w-full   p-2"
+              title="Shopping Cart"
+            >
+              <MdShoppingCart
+                className="hover:text-blue-100 mx-auto"
+                size={20}
+                onClick={() => navigate("/admin/cart")}
+              />
+            </li>
+
+            <li
+              className="cursor-pointer rounded-md shadow-xl w-full  p-2 "
+              title="Add Custom Product"
+            >
+              <FaRegStickyNote
+                className="hover:text-blue-100 mx-auto"
+                size={20}
+                onClick={() => navigate("/admin/add/custom/product")}
+              />
+            </li>
+            <li
+              className="cursor-pointer rounded-md shadow-xl flex items-center  p-2 w-full  "
+              title="Open Orders"
+            >
+              <MdReceipt
+                className="hover:text-blue-100 mx-auto"
+                size={20}
+                onClick={() => navigate("/admin/open/orders")}
+              />
+                {savedInvoices?.length !==0  && <span className="flex items-center justify-center w-4 h-4 text-white text-xs  font-bold bg-red-500 border border-red-500 rounded-full">{savedInvoices?.length}</span>}
+              
+            </li>
+
+            <li
+              onClick={openNewInvoice}
+              title="Create New Invoice"
+              className=" hover:text-blue-100 cursor-pointer font-bold w-full  rounded-md  shadow-xl  p-2  "
+            >
+              <FaPlus size={20} className="mx-auto cursor-pointer" />
+            </li>
+
+            <li className="flex items-center w-full rounded-md  shadow-xl p-2">
+              {adminName && <p className="text-xl mx-auto">{adminName}</p>}
+            </li>
+            <li className="w-full rounded-md shadow-xl p-2">
               {adminName && (
-                <MdLogout
-                  title="Logout"
+                <FaUserShield
                   size={20}
-                  onClick={() => {
-                    dispatch(removeAdminData());
-                    adminLogout();
-                    navigate("/shop/admin/login");
-                  }}
-                  className="cursor-pointer hover:text-secondary"
+                  className="hover:text-secondary cursor-pointer mx-auto"
+                  onClick={() => logout()}
+                  title="Logout"
                 />
               )}
             </li>

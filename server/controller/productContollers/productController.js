@@ -1,27 +1,25 @@
 import productModel from "../../model/productModel.js";
 import { generateProductId } from "../../utils/generateProductId.js";
-import {
-  newProductValidation,
-  updateProductValidation,
-} from "../../utils/joiValidation.js";
+import {newProductValidation,updateProductValidation} from "../../utils/joiValidation.js";
 
 // ---------------------------------------- Create a new product -------------------------------------------
 
 export const createProduct = async (req, res) => {
   try {
+    // body validation
     const { error, value } = newProductValidation.validate(req.body);
 
         if(error){
             return res.status(400).json({success:false,message: error.details[0].message });
         }
-
-        const { productName, quantity, costPrice, sellingPrice, discount, category } = value;
+       
+        const { productName, quantity, costPrice,unit, sellingPrice,costPriceProfit, discount, category ,discountType } = value;
         const {id,countryName,currencyCode} = req.shop;
+   
 
-     
+   
         const lowerCaseproductName = productName.trim().toLowerCase()
-
-        
+ 
         const productExist = await productModel.findOne({shop:id, productName:lowerCaseproductName})
 
         if(productExist){
@@ -36,7 +34,14 @@ export const createProduct = async (req, res) => {
           return res.status(400).json({success:false,message:"You can only add one price rate"})
       }
       
+       let costProfitSum
 
+       if(costPrice > 0){
+          costProfitSum = costPrice * (costPriceProfit / 100)
+       }
+
+        const checkCostPrice = costPrice === 0 ? costPrice : costPrice + costProfitSum
+       
         //  generating unique ID for customers 
              let productId;
        
@@ -44,28 +49,30 @@ export const createProduct = async (req, res) => {
               productId = generateProductId()
              } while (await productModel.findOne({product_id:productId}));
        
-       
-       
-
-        const product = await productModel.create({
+        const newProduct = new productModel({
             product_id: productId,
             productName:lowerCaseproductName,
             quantity,
-            costPrice,
-            sellingPrice,
+            costPrice:checkCostPrice,
+            sellingPrice:sellingPrice,
             discount,
             category,
             shop:id,
             countryName,
-            currencyCode
+            currencyCode,
+            discountType,
+            unit,
+            costPriceProfit:costPriceProfit
         });
-        res.status(201).json({ success: true, message: "Product created successfully", data:product });
+
+        await newProduct.save()
+
+         res.status(201).json({ success: true, message: "Product created successfully", data:newProduct });
     } catch (error) {
-        console.log(error)
         res.status(500).json({ success: false, message: error.message });
     }
   }
-
+ 
 // ---------------------------------------- Delete product ---------------------------------------------------
 
 export const deleteProduct = async (req, res) => {
@@ -75,20 +82,14 @@ export const deleteProduct = async (req, res) => {
     const productExist = await productModel.findById(id);
 
     if (!productExist) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Product not found" });
+      return res.status(400).json({ success: false, message: "Product not found" });
     }
 
     await productModel.findByIdAndDelete(id);
 
-    res
-      .status(200)
-      .json({ success: true, message: "Product deleted successfully" });
+    res.status(200).json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, message: "internal server error" });
+    return res.status(500).json({ success: false, message: "internal server error" });
   }
 };
 
@@ -99,68 +100,41 @@ export const updateProduct = async (req, res) => {
     const { error, value } = updateProductValidation.validate(req.body);
 
     if (error) {
-      return res
-        .status(400)
-        .json({ success: false, message: error.details[0].message });
+      return res.status(400).json({ success: false, message: error.details[0].message });
     }
 
     const { id } = req.params;
-    const {
-      productName,
-      quantity,
-      costPrice,
-      sellingPrice,
-      discount,
-      category,
-    } = value;
+    const { productName, quantity, costPrice,sellingPrice, discount, category,discountType} = value;
 
     if (sellingPrice === 0 && costPrice === 0) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Selling price and cost price cannot be 0",
-        });
+      return res.status(400).json({success: false,message: "Selling price and cost price cannot be 0",});
     }
 
     if (sellingPrice > 0 && costPrice > 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "You can only add one price rate" });
+      return res.status(400).json({ success: false, message: "You can only add one price rate" });
     }
 
     const productExist = await productModel.findById(id);
 
     if (!productExist) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Product not found" });
+      return res.status(400).json({ success: false, message: "Product not found" });
     }
 
-    const updatedProduct = await productModel.findByIdAndUpdate(
-      id,
-      {
+    const updatedProduct = await productModel.findByIdAndUpdate(id,{
         productName,
         quantity,
         costPrice,
         sellingPrice,
         discount,
         category,
+        discountType
       },
       { new: true }
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Product updated successfully",
-        data: updatedProduct,
-      });
+    res.status(200).json({success: true,message: "Product updated successfully",data: updatedProduct});
   } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, message: "internal server error" });
+    return res.status(500).json({ success: false, message: "internal server error" });
   }
 };
 
@@ -170,8 +144,8 @@ export const getCategoryProducts = async (req, res) => {
   try {
     const { categoryId } = req.query;
     const {id} = req.shop;
-    const fetchProduct = await productModel
-      .find({ category: categoryId,shop:id })
+    
+    const fetchProduct = await productModel.find({ category: categoryId,shop:id })
       .sort({ createdAt: -1 })
       .populate("category");
 

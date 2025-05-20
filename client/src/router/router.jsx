@@ -1,26 +1,37 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ShopLayout } from "../layout/ShopLayout";
 import { ErrorPage } from "../pages/shared/ErrorPage/ErrorPage";
-import { ShopSignup } from "../pages/shop/ShopSignup/ShopSignup";
 import { AdminHome } from "../pages/admin/AdminHome/AdminHome";
-import { ShopLogin } from "../pages/shop/ShopLogin/ShopLogin";
 import { ProtectedRouteAdmin } from "./ProtectedRouteAdmin";
 import { ProtectedRouteStaff } from "./ProtectedRouteStaff";
 import { ProtectedRouteShop } from "./ProtectedRouteShop";
 import { Home } from "../pages/shop/Home/Home";
 import { AdminLayout } from "../layout/AdminLayout";
 import { StaffLayout } from "../layout/StaffLayout";
-import { Login } from "../components/shared/Login/Login";
 import { Cart } from "../pages/shared/Cart/Cart";
 import { AddProductCard } from "../components/shared/AddProdutCard/AddProductCard";
 import { StaffHome } from "../pages/staff/StaffHome/StaffHome";
-import { SignupAndLogin } from "../pages/shared/SignupAndLogin/SignupAndLogin";
 import { AddNewCategory } from "../pages/shared/AddNewCategory/AddNewCategory";
 import { ListStaffs } from "../pages/admin/ListStaffs/ListStaffs";
 import { ListCustomers } from "../pages/shared/ListCustomers/ListCustomers";
 import { AddNewCustomer } from "../pages/shared/AddNewCustomer/AddNewCustomer";
 import { ListCategories } from "../pages/shared/ListCategories/ListCategories";
 import { ListProducts } from "../pages/shared/ListProducts/ListProducts";
+import { AdminLoginPage } from "../pages/admin/AdminLoginPage/AdminLoginPage";
+import { StaffSignupPage } from "../pages/staff/StaffSignupPage/StaffSignupPage";
+import { StaffLoginPage } from "../pages/staff/StaffLoginPage/StaffLoginPage";
+import { ShopLoginPage } from "../pages/shop/ShopLoginPage/ShopLoginPage";
+import { ShopSignupPage } from "../pages/shop/ShopSignupPage/ShopSignupPage";
+import { ListInvoices } from "../pages/shared/ListInvoices/ListInvoices";
+import { OpenOrders } from "../pages/shared/OpenOrders/OpenOrders";
+import { AddNewCustomProduct } from "../pages/shared/AddNewCustomProduct/AddNewCustomProduct";
+import { AddCustomProduct } from "../components/shared/AddCustomProduct/AddCustomProduct";
+import { UploadCSV } from "../pages/admin/UploadCSV/UploadCSV";
+import { PaymentSuccess } from "../pages/shared/PaymentSuccess/PaymentSuccess";
+import { PaymentCancel } from "../pages/shared/PaymentCancel/PaymentCancel";
+import { InvoiceData } from "../pages/shared/InvoiceData/InvoiceData";
+import { ListCustomerInvoices } from "../pages/shared/ListCustomerInvoices/ListCustomerInvoices";
+import { OpenOrderCartView } from "../pages/shared/OpenOrderCartView/OpenOrderCartView";
 
 export const router = createBrowserRouter([
   // Shop rotes
@@ -29,8 +40,8 @@ export const router = createBrowserRouter([
     element: <ShopLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { path: "", element: <ShopLogin action="Login" /> },
-      // { path: "", element: <ListCategories /> },
+      { path: "", element: <ShopLoginPage /> },
+      // { path: "", element: <PaymentCancel /> },
 
       {
         path: "shop",
@@ -40,11 +51,11 @@ export const router = createBrowserRouter([
 
           {
             path: "admin/login",
-            element: <Login role="Admin" action="Login" />,
+            element: <AdminLoginPage />,
           },
           {
             path: "staff/login",
-            element: <Login role="Staff" action="Login" />,
+            element: <StaffLoginPage />,
           },
         ],
       },
@@ -64,15 +75,19 @@ export const router = createBrowserRouter([
           { path: "", element: <AdminHome /> },
           {
             path: "shop/signup",
-            element: <ShopSignup role="Admin" action="Signup" />,
+            element: <ShopSignupPage />,
           },
           {
             path: "signup",
-            element: <Login role="Admin" action="Signup" />,
+            // element: <Login role="Admin" action="Signup" />,
           },
           {
             path: "add/product",
             element: <AddProductCard />,
+          },
+          {
+            path: "add/custom/product",
+            element: <AddNewCustomProduct />,
           },
           {
             path: "product/view",
@@ -87,8 +102,12 @@ export const router = createBrowserRouter([
             element: <AddNewCategory />,
           },
           {
+            path: "upload/csv",
+            element: <UploadCSV />,
+          },
+          {
             path: "staff/signup",
-            element: <SignupAndLogin role="Staff" action="Signup" />,
+            element: <StaffSignupPage />,
           },
           {
             path: "staff/view",
@@ -99,12 +118,40 @@ export const router = createBrowserRouter([
             element: <ListCustomers />,
           },
           {
+            path: "customer/view/invoice/:id",
+            element: <ListCustomerInvoices />,
+          },
+          {
             path: "customer/add",
             element: <AddNewCustomer />,
           },
           {
             path: "cart",
             element: <Cart />,
+          },
+          {
+            path: "open/orders",
+            element: <OpenOrders />,
+          },
+          {
+            path: "open/orders/data/:id",
+            element: <OpenOrderCartView/>,
+          },
+          {
+            path: "invoices",
+            element: <ListInvoices />,
+          },
+          {
+            path: "invoice/data/:id",
+            element: <InvoiceData />,
+          },
+          {
+            path: "payment/success",
+            element: <PaymentSuccess />,
+          },
+          {
+            path: "payment/cancel",
+            element: <PaymentCancel />,
           },
         ],
       },
@@ -123,8 +170,21 @@ export const router = createBrowserRouter([
         children: [{ path: "", element: <StaffHome /> }],
       },
       {
+        path: "open/orders",
+        element: <OpenOrders />,
+      },
+      {
+        path: "invoice/data/:id",
+        element: <InvoiceData />,
+      },
+
+      {
         path: "add/product",
         element: <AddProductCard />,
+      },
+      {
+        path: "add/custom/product",
+        element: <AddCustomProduct />,
       },
       {
         path: "product/view",
@@ -145,6 +205,14 @@ export const router = createBrowserRouter([
       {
         path: "customer/add",
         element: <AddNewCustomer />,
+      },
+      {
+        path: "payment/success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "payment/cancel",
+        element: <PaymentCancel />,
       },
     ],
   },

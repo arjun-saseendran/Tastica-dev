@@ -33,7 +33,26 @@ const customerSchema = new mongoose.Schema({
     isActive:{
         type:Boolean,
         default:false
-    }
+    },
+    pointAmount:{
+        type:Number,
+        default:0
+    },
+
+    loyalityPointHistory:{
+        type:[{
+              action:{type:String,enum:["earn","redeem"],default:null},
+              point:{type:Number,default:0},
+              createdAt:{type:Date,default:Date.now},
+              invoice:{type:mongoose.Schema.Types.ObjectId,ref:"Invoice"},     
+        }],
+        default:[]
+    },
+
+    invoices:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Invoice"
+        }]
 },{ timestamps: true } )
 
 customerSchema.index({customerId:1,phoneNumber:1})
