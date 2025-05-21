@@ -17,7 +17,7 @@ export const Home = () => {
     dispatch(removeStaffData());
   }, []);
   return (
-    <div className={`mx-2  bg-[${tertiary}]`}>
+    <div className='mx-2  bg-tertiary'>
       <div className="flex flex-col pb-20  py-10 mx-auto my-20 h-1/2 md:w-1/2 xl:w-1/4 items-center justify-center shadow-2xl rounded-lg ">
         <h1 className="text-3xl py-5 font-thin text-center text-primary ">
           Welcome
