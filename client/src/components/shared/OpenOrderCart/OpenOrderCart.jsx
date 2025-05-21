@@ -28,6 +28,7 @@ export const OpenOrderCart = ({
   const invoice = singleInvoiceOpenOrder;
 
   const products = invoice?.products;
+  console.log(products)
 
   const [quantities, setQuantities] = useState({});
   const [alertMessage, setAlertMessage] = useState(null);
@@ -101,7 +102,8 @@ export const OpenOrderCart = ({
               {product?.productName}
             </span>
 
-            <div className="flex items-center gap-10 col-span-12 xl:col-span-4 my-2 xl:my-0 mx-auto xl:mx-0">
+            <div className="flex items-center col-span-12 xl:col-span-4 my-2 xl:my-0 mx-auto xl:mx-0">
+              <>
               <input
                 type="number"
                 className="w-14 bg-tertiary text-center"
@@ -120,15 +122,19 @@ export const OpenOrderCart = ({
                   })
                 }
               />
+              {product?.unit}
+</>
+            </div>
 
+            <span className="col-span-12 flex items-center gap-2 xl:col-span-2 mx-auto xl:mx-0 text-right my-2 xl:my-0">
+             {product?.price}
+              
               <FaTrash
+              size={12}
+              title="Remove Product"
                 className="text-secondary hover:text-red-600 cursor-pointer"
                 onClick={() => setAlertMessage(product._id)}
               />
-            </div>
-
-            <span className="col-span-12 xl:col-span-2 mx-auto xl:mx-0 text-right my-2 xl:my-0">
-              MVR{product?.price}
             </span>
           </li>
         ))}
