@@ -7,10 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { useState } from "react";
 import { saveSearchQuery } from "../../../redux/features/searchSlice";
-import { useAdmins } from "../../../hooks/useAdmins";
 import { useInvoices } from "../../../hooks/useInvoices";
-import Logo from "../../../assets/logo.png"
-
+import Logo from "../../../assets/logo.png";
+import { axiosInstance } from "../../../config/axiosInstance";
+import toast from "react-hot-toast";
+import { removeAdminData } from "../../../redux/features/authSlice";
 
 export const AdminHeader = () => {
   const [open, setOpen] = useState(false);
@@ -18,13 +19,26 @@ export const AdminHeader = () => {
   const navigate = useNavigate();
   const adminName = useSelector((state) => state?.auth?.adminData?.userName);
   const searchQuery = useSelector((state) => state?.search);
-  const { logout } = useAdmins();
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance({
+        method: "POST",
+        url: "/admin/logout",
+        withCredentials: true,
+      });
+      dispatch(removeAdminData());
+      toast("Logout success");
+      navigate("/shop/admin/login")
+    } catch (error) {
+      toast.error("Failed to logout");
+    }
+  };
+
   const openNewInvoice = () => {
     window.open("/admin/cart", "_blank");
   };
-  const {savedInvoices} = useInvoices();
-  
-  
+  const { savedInvoices } = useInvoices();
 
   return (
     <nav className="w-full">
@@ -97,8 +111,11 @@ export const AdminHeader = () => {
                 size={20}
                 onClick={() => navigate("/admin/open/orders")}
               />
-                {savedInvoices?.length !==0  && <span className="flex items-center justify-center w-4 h-4 text-white text-xs  font-bold bg-primary border border-primary rounded-full">{savedInvoices?.length}</span>}
-              
+              {savedInvoices?.length !== 0 && (
+                <span className="flex items-center justify-center w-4 h-4 text-white text-xs  font-bold bg-primary border border-primary rounded-full">
+                  {savedInvoices?.length}
+                </span>
+              )}
             </li>
 
             <li
@@ -117,7 +134,7 @@ export const AdminHeader = () => {
                 <FaUserShield
                   size={20}
                   className="hover:text-orange-600 cursor-pointer mx-auto"
-                  onClick={() => logout()}
+                  onClick={() => handleLogout()}
                   title="Logout"
                 />
               )}

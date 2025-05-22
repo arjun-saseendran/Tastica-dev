@@ -28,7 +28,6 @@ export const OpenOrderCart = ({
   const invoice = singleInvoiceOpenOrder;
 
   const products = invoice?.products;
-  console.log(products)
 
   const [quantities, setQuantities] = useState({});
   const [alertMessage, setAlertMessage] = useState(null);
@@ -104,41 +103,39 @@ export const OpenOrderCart = ({
 
             <div className="flex items-center col-span-12 xl:col-span-4 my-2 xl:my-0 mx-auto xl:mx-0">
               <>
-              <input
-                type="number"
-                className="w-14 bg-tertiary text-center"
-                value={quantities[product?.productId] ?? 1}
-                onChange={(e) => {
-                  const newQty = e.target.value;
-                  setQuantities((prev) => ({
-                    ...prev,
-                    [product.productId]: newQty,
-                  }));
-                }}
-                onBlur={() =>
-                  addProductToInvoice({
-                    productId: product?.productId,
-                    quantity: quantities[product.productId] ?? "",
-                  })
-                }
-              />
-              {product?.unit}
-</>
+                <input
+                  type="number"
+                  className="w-14 bg-tertiary text-center"
+                  value={quantities[product?.productId] ?? 1}
+                  onChange={(e) => {
+                    const newQty = e.target.value;
+                    setQuantities((prev) => ({
+                      ...prev,
+                      [product.productId]: newQty,
+                    }));
+                  }}
+                  onBlur={() =>
+                    addProductToInvoice({
+                      productId: product?.productId,
+                      quantity: quantities[product.productId] ?? "",
+                    })
+                  }
+                />
+                {product?.unit}
+              </>
             </div>
 
             <span className="col-span-12 flex items-center gap-2 xl:col-span-1 mx-auto xl:mx-0 text-right my-2 xl:my-0">
-             {product?.price}
-              
-              
+              {product?.price}
             </span>
             <span className="col-span-12 xl:col-span-1">
-                <FaTrash
-                  title="Remove product"
-                  className="text-primary hover:text-orange-600 cursor-pointer"
-                  onClick={() => setAlertMessage(product._id)}
-                  size={12}
-                />
-              </span>
+              <FaTrash
+                title="Remove product"
+                className="text-primary hover:text-orange-600 cursor-pointer"
+                onClick={() => setAlertMessage(product._id)}
+                size={12}
+              />
+            </span>
           </li>
         ))}
       </ul>

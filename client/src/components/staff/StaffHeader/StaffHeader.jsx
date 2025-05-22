@@ -7,9 +7,11 @@ import { FaUserTie, FaRegStickyNote, FaPlus } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { saveSearchQuery } from "../../../redux/features/searchSlice";
-import { useStaffs } from "../../../hooks/useStaffs";
 import { useInvoices } from "../../../hooks/useInvoices";
 import Logo from "../../../assets/logo.png";
+import { axiosInstance } from "../../../config/axiosInstance";
+import toast from "react-hot-toast";
+import { removeStaffData } from "../../../redux/features/authSlice";
 
 export const StaffHeader = () => {
   const [open, setOpen] = useState(false);
@@ -17,8 +19,24 @@ export const StaffHeader = () => {
   const navigate = useNavigate();
   const staffName = useSelector((state) => state?.auth?.staffData?.userName);
   const searchQuery = useSelector((state) => state?.search);
-  const { logout } = useStaffs();
   const { savedInvoices } = useInvoices();
+  
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance({
+        method: "POST",
+        url: "/staff/logout",
+        withCredentials: true,
+      });
+      dispatch(removeStaffData);
+      toast.success("Logout success");
+      navigate("/shop/staff/login")
+
+    } catch (error) {
+      toast.error("Failed to logout");
+    }
+  };
 
   const openNewInvoice = () => {
     window.open("/staff", "_blank");
@@ -119,7 +137,7 @@ export const StaffHeader = () => {
                 <FaUserTie
                   size={20}
                   className="hover:text-orange-600 cursor-pointer mx-auto text-primary"
-                  onClick={() => logout()}
+                  onClick={() => handleLogout()}
                   title="Logout"
                 />
               )}

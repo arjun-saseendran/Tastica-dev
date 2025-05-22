@@ -1,7 +1,6 @@
 import { FaUserShield } from "react-icons/fa";
 import { FaUserTie } from "react-icons/fa";
 import { DashboardCard } from "../../../components/shared/DashboardCard/DashboardCard";
-import { tertiary } from "../../../utils/constants";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
