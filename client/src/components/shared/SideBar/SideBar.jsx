@@ -95,7 +95,7 @@ export const SideBar = () => {
             Products
           </li>
         )}
-        <li
+        {admin && <li
           onClick={() =>
             handleSideBar(admin ? "/admin/add/product" : "/staff/add/product")
           }
@@ -103,8 +103,8 @@ export const SideBar = () => {
         >
           <FaBox />
           Add Product
-        </li>
-        <li
+        </li>}
+        {admin &&<li
           onClick={() =>
             handleSideBar(
               admin ? "/admin/category/view" : "/staff/category/view"
@@ -114,8 +114,8 @@ export const SideBar = () => {
         >
           <MdCategory />
           Categories
-        </li>
-        <li
+        </li>}
+        {admin &&<li
           onClick={() =>
             handleSideBar(admin ? "/admin/add/category" : "/staff/add/category")
           }
@@ -123,21 +123,21 @@ export const SideBar = () => {
         >
           <BiCategory />
           Add Category
-        </li>
-        <li
+        </li>}
+        {admin && <li
           onClick={() => handleSideBar("/admin/upload/products/csv")}
           className="bg-primary rounded flex items-center hover:bg-opacity-90 cursor-pointer gap-2 justify-start p-5 h-10"
         >
           <FaFileCsv />
           Categories
-        </li>
-        <li
+        </li>}
+       {admin && <li
           onClick={() => handleSideBar("/admin/upload/categories/csv")}
           className="bg-primary rounded flex items-center hover:bg-opacity-90 cursor-pointer gap-2 justify-start p-5 h-10"
         >
           <FaFileCsv />
           Products
-        </li>
+        </li>}
         <li
           onClick={() => handleSideBar(admin ? "/admin/cart" : "/staff")}
           className="bg-primary rounded flex items-center hover:bg-opacity-90 cursor-pointer gap-2 justify-start p-5 h-10"
