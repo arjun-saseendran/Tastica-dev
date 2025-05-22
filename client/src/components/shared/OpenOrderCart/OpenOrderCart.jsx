@@ -126,16 +126,19 @@ export const OpenOrderCart = ({
 </>
             </div>
 
-            <span className="col-span-12 flex items-center gap-2 xl:col-span-2 mx-auto xl:mx-0 text-right my-2 xl:my-0">
+            <span className="col-span-12 flex items-center gap-2 xl:col-span-1 mx-auto xl:mx-0 text-right my-2 xl:my-0">
              {product?.price}
               
-              <FaTrash
-              size={12}
-              title="Remove Product"
-                className="text-secondary hover:text-red-600 cursor-pointer"
-                onClick={() => setAlertMessage(product._id)}
-              />
+              
             </span>
+            <span className="col-span-12 xl:col-span-1">
+                <FaTrash
+                  title="Remove product"
+                  className="text-secondary hover:text-red-600 cursor-pointer"
+                  onClick={() => setAlertMessage(product._id)}
+                  size={12}
+                />
+              </span>
           </li>
         ))}
       </ul>

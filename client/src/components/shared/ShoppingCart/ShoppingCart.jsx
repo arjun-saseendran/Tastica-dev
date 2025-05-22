@@ -223,9 +223,11 @@ export const ShoppingCart = ({
               </>
               <span>kg</span>
             </div>
-            <span className="flex items-center  gap-2 col-span-12 xl:col-span-2 mx-auto xl:mx-0 text-right my-2 xl:my-0  ">
+            <span className="flex items-center  gap-2 col-span-12 xl:col-span-1 mx-auto xl:mx-0 text-right my-2 xl:my-0  ">
               {product?.price}
-              <span>
+              
+            </span>
+            <span className="col-span-12 xl:col-span-1">
                 <FaTrash
                   title="Remove product"
                   className="text-secondary hover:text-red-600 cursor-pointer"
@@ -233,7 +235,6 @@ export const ShoppingCart = ({
                   size={12}
                 />
               </span>
-            </span>
           </li>
         ))}
       </ul>

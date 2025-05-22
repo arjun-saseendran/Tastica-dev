@@ -140,7 +140,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "open/orders/data/:id",
-            element: <OpenOrderCartView/>,
+            element: <OpenOrderCartView />,
           },
           {
             path: "invoices",
@@ -177,6 +177,10 @@ export const router = createBrowserRouter([
       {
         path: "open/orders",
         element: <OpenOrders />,
+      },
+      {
+        path: "open/orders/data/:id",
+        element: <OpenOrderCartView />,
       },
       {
         path: "invoice/data/:id",
