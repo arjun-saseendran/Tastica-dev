@@ -230,7 +230,7 @@ export const ShoppingCart = ({
             <span className="col-span-12 xl:col-span-1">
                 <FaTrash
                   title="Remove product"
-                  className="text-secondary hover:text-red-600 cursor-pointer"
+                  className="text-primary hover:text-orange-600 cursor-pointer"
                   onClick={() => setAlertMessage(product._id)}
                   size={12}
                 />
@@ -276,7 +276,7 @@ export const ShoppingCart = ({
       {!isNewCustomer && (
         <div className="flex gap-2 mt-2 justify-between">
           <button
-            className="flex items-center justify-center gap-2 px-6 py-3 w-1/2 bg-yellow-400 hover:bg-opacity-90 text-white rounded-lg"
+            className="flex items-center justify-center gap-2 px-6 py-3 w-1/2 bg-secondary hover:bg-opacity-90 text-white rounded-lg"
             onClick={() => {
               saveInvoice();
               resetBillingState();

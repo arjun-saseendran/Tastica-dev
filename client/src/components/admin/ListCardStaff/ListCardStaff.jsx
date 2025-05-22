@@ -115,7 +115,7 @@ export const ListCardStaff = () => {
                           title="Delete"
                           size={22}
                           onClick={() => setAlertMessage(staff?._id)}
-                          className="hover:text-red-500 text-secondary cursor-pointer"
+                          className="hover:text-orange-600 text-primary cursor-pointer"
                         />
                       </>
                     )}

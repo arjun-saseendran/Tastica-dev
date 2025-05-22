@@ -106,7 +106,7 @@ export const ListCardCustomer = () => {
                           title="Delete"
                           size={22}
                           onClick={() => setAlertMessage(customer?._id)}
-                          className="hover:text-red-500 text-secondary cursor-pointer"
+                          className="hover:text-orange-600 text-primary cursor-pointer"
                         />
                         <Link to={`/admin/customer/view/invoice/${customer?._id}`}>
                           <MdEventNote
